@@ -110,21 +110,39 @@ class GameObject {
 }
 
 class AvaterObject extends GameObject {
+    constructor(obj) {
+        super(obj);
+        this.dx = 0;
+        this.dz = 0;
+    }
     idle() {
         super.idle();
         const speed = 0.025;
+        const ax = 0.0005;
+        const az = 0.0005;
+
         if (gameController.left()) {
-            this.position.x -= speed;
+            this.dx -= ax;
         }
         if (gameController.right()) {
-            this.position.x += speed;
+            this.dx += ax;
         }
+        if (!gameController.left() && !gameController.right()) {
+            this.dx = Math.sign(this.dx) * (Math.max(0, Math.abs(this.dx) - 2 * ax));
+        }
+        this.position.x += this.dx;
+
         if (gameController.up()) {
-            this.position.z -= speed;
+            this.dz -= az;
         }
         if (gameController.down()) {
-            this.position.z += speed;
+            this.dz += az;
         }
+        if (!gameController.up() && !gameController.down()) {
+            this.dz = Math.sign(this.dz) * (Math.max(0, Math.abs(this.dz) - 2 * az));
+        }
+        this.position.z += this.dz;
+
         if (gameController.action()) {
             //
         }
@@ -145,6 +163,11 @@ class FieldObject extends GameObject {
     }
     containsPoint(pos) {
         return this.children.filter((mesh) => {
+            // if (mesh.box.containsPoint(pos)) {
+            //     return (mesh.box.intersectsSphere(pos));
+            // } else {
+            //     return false;
+            // }
             return mesh.box.containsPoint(pos);
         });
     }
