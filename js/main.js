@@ -113,33 +113,41 @@ class AvaterObject extends GameObject {
     constructor(obj) {
         super(obj);
         this.dx = 0;
+        this.dtx = 1;
         this.dz = 0;
+        this.dtz = 1;
     }
     idle() {
         super.idle();
-        const speed = 0.025;
-        const ax = 0.0005;
-        const az = 0.0005;
+        const speed = 0.01;
+        const ax = 0.004;
+        const az = 0.004;
 
         if (gameController.left()) {
-            this.dx -= ax;
+            this.dtx++;
+            this.dx = -Math.log(this.dtx) * speed;
         }
         if (gameController.right()) {
-            this.dx += ax;
+            this.dtx++;
+            this.dx = Math.log(this.dtx) * speed;
         }
         if (!gameController.left() && !gameController.right()) {
-            this.dx = Math.sign(this.dx) * (Math.max(0, Math.abs(this.dx) - 2 * ax));
+            this.dtx = 0;
+            this.dx = Math.sign(this.dx) * (Math.max(0, Math.abs(this.dx) - ax));
         }
         this.position.x += this.dx;
 
         if (gameController.up()) {
-            this.dz -= az;
+            this.dtz++;
+            this.dz = -Math.log(this.dtz) * speed;
         }
         if (gameController.down()) {
-            this.dz += az;
+            this.dtz++;
+            this.dz = Math.log(this.dtz) * speed;
         }
         if (!gameController.up() && !gameController.down()) {
-            this.dz = Math.sign(this.dz) * (Math.max(0, Math.abs(this.dz) - 2 * az));
+            this.dtz = 0;
+            this.dz = Math.sign(this.dz) * (Math.max(0, Math.abs(this.dz) - az));
         }
         this.position.z += this.dz;
 
